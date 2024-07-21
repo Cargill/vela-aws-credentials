@@ -5,7 +5,7 @@
 
 FROM chainguard/static:latest
 
-COPY dist/vela-aws-credentials_linux_amd64_v1/vela-aws-credentials /bin/vela-aws-credentials
+COPY release/vela-aws-credentials /bin/vela-aws-credentials
 
 ENTRYPOINT [ "/bin/vela-aws-credentials" ]
 

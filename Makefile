@@ -110,7 +110,11 @@ test-cover:
 build:
 	@echo
 	@echo "### Building release/vela-aws-credentials binary"
-	goreleaser build --snapshot --clean
+	GOOS=linux CGO_ENABLED=0 \
+		go build -a \
+		-ldflags '${LD_FLAGS}' \
+		-o release/vela-aws-credentials \
+		github.com/Cargill/vela-aws-credentials/cmd/vela-aws-credentials
 
 # The `check` target is intended to output all
 # dependencies from the Go module that need updates.
@@ -171,6 +175,21 @@ bump-deps-full: check
 	@echo
 	@echo "### Upgrading all dependencies"
 	@go get -t -u ./...
+
+# The `lint` target is intended to analyze the Go source code for enforcing code standards.
+.PHONY: lint
+lint: lint-install
+	@echo
+	@echo "### Linting Go Code"
+	@golangci-lint version
+	@golangci-lint run --timeout 5m
+
+# The `lint-install` target is intended to install the lint binary into the current environment.
+.PHONY: lint-install
+lint-install:
+	@echo
+	@echo "### Installing Lint Binary"
+	@which golangci-lint || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.55.2
 
 # The `docker-build` target is intended to build
 # the Docker image for the plugin.
