@@ -78,6 +78,10 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("no role duration provided")
 	}
 
+	if c.Vela.RequestTokenURL == "" {
+		return fmt.Errorf("no request token url provided")
+	}
+
 	if c.Vela.RequestToken == "" {
 		return fmt.Errorf("no request token provided - make sure you have set `id_request: yes` in the step")
 	}

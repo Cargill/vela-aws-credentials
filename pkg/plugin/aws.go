@@ -79,13 +79,12 @@ func (c *Config) AssumeRole(token string) (*aws.Credentials, error) {
 }
 
 func (c *Config) WriteCreds(creds *aws.Credentials) error {
-	content := fmt.Sprintf(`
-	#!/bin/sh
-	export AWS_ACCESS_KEY_ID=%s
-	export AWS_SECRET_ACCESS_KEY=%s
-	export AWS_SESSION_TOKEN=%s
-	export AWS_DEFAULT_REGION=%s
-	`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken, c.AWS.Region)
+	content := fmt.Sprintf(
+		`#!/bin/sh
+export AWS_ACCESS_KEY_ID=%s
+export AWS_SECRET_ACCESS_KEY=%s
+export AWS_SESSION_TOKEN=%s
+export AWS_DEFAULT_REGION=%s`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken, c.AWS.Region)
 
 	if _, err := os.Stat(c.ScriptPath); os.IsNotExist(err) {
 		err = os.MkdirAll(filepath.Dir(c.ScriptPath), 0700)
