@@ -1,18 +1,22 @@
+// SPDX-License-Identifier: Apache-2.0
+
 package plugin
 
 import (
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/google/go-cmp/cmp"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig_WriteCreds(t *testing.T) {
 	type args struct {
 		creds *aws.Credentials
 	}
+
 	tests := []struct {
 		name    string
 		args    args
@@ -32,6 +36,7 @@ func TestConfig_WriteCreds(t *testing.T) {
 			wantErr: false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			scriptPath := filepath.Join(t.TempDir(), "script.sh")
@@ -47,6 +52,7 @@ func TestConfig_WriteCreds(t *testing.T) {
 				t.Errorf("WriteCreds() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
 			expected, err := os.ReadFile(tt.want)
 			assert.NoError(t, err)
 			assert.NotEqual(t, 0, len(expected), "expected golden script.sh file")
