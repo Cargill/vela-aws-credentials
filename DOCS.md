@@ -33,7 +33,7 @@ resource "aws_iam_openid_connect_provider" "vela" {
 
 Review the [official AWS documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html) for IAM roles with OIDC.
 
-**NOTE:** It is critical that the IAM trust policy has conditions to limit which Vela pipelines/steps are able to assume the IAM role.
+> **NOTE:** It is critical that the IAM trust policy has conditions to limit which Vela pipelines/steps are able to assume the IAM role.
 
 The example below includes several conditions that limit the ability to assume the IAM role:
 
