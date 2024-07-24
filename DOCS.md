@@ -42,7 +42,7 @@ The example below includes several conditions that limit the ability to assume t
 3. The `StringEquals` condition on the `aud` claim ensures that only tokens with the audience of `sts.amazonaws.com` can assume the IAM role in AWS. `sts.amazonaws.com` is the default audience when utilizing this plugin.
 4. The `StringEquals` condition on the `commands` claim ensures that only steps without a `commands` section can assume the IAM role in AWS.
 
-**NOTE:** AWS requires that all conditions must be met for the role assumption to succeed. If any condition is not met, the role assumption will fail.
+> **NOTE:** AWS requires that all conditions must be met for the role assumption to succeed. If any condition is not met, the role assumption will fail.
 
 ```json
 {
