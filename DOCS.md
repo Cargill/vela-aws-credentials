@@ -6,7 +6,7 @@ Source Code: https://github.com/Cargill/vela-aws-credentials
 
 Registry: https://hub.docker.com/r/cargill/vela-aws-credentials
 
-## Perquisites
+## Prerequisites
 
 ### Adding the identity provider to AWS
 
