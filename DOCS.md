@@ -1,6 +1,6 @@
 ## Description
 
-With OpenID Connect (OIDC), you can configure your pipeline to request a short-lived set of AWS credentials from AWS.
+With OpenID Connect (OIDC), you can configure your pipeline to request a short-lived set of credentials from AWS.
 
 Source Code: https://github.com/Cargill/vela-aws-credentials
 
