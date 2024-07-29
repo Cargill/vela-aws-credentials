@@ -37,7 +37,7 @@ jobs:
           GOOS: linux
           CGO_ENABLED: '1'
         run: |
-          make build-static-ci
+          make build
 
       - name: publish
         uses: elgohr/Publish-Docker-Github-Action@eb53b3ec07136a6ebaed78d8135806da64f7c7e2 # v5
