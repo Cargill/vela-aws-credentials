@@ -14,3 +14,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      aws-sdk-go:
+        patterns:
+          - "github.com/aws/aws-sdk-go*"
+    ignore:
+      - dependency-name: "github.com/aws/aws-sdk-go*"
+        update-types: [ "version-update:semver-patch" ]
