@@ -17,9 +17,7 @@ updates:
     groups:
       aws-sdk-go:
         patterns:
-          - "github.com/aws/aws-sdk-go"
-          - "github.com/aws/aws-sdk-go-v2"
-          - "github.com/aws/aws-sdk-go-v2/*"
+          - "github.com/aws/aws-sdk-go*"
     ignore:
-      - dependency-name: "github.com/aws/aws-sdk-go-v2/*"
+      - dependency-name: "github.com/aws/aws-sdk-go*"
         update-types: [ "version-update:semver-patch" ]
