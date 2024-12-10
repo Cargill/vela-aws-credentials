@@ -3,6 +3,7 @@
 package plugin
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -14,7 +15,8 @@ import (
 
 func TestConfig_WriteCreds(t *testing.T) {
 	type args struct {
-		creds *aws.Credentials
+		creds        *aws.Credentials
+		scriptFormat string
 	}
 
 	tests := []struct {
@@ -24,27 +26,42 @@ func TestConfig_WriteCreds(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "success",
+			name: "shell",
 			args: args{
 				creds: &aws.Credentials{
 					AccessKeyID:     "ACCESS_KEY_ID",
 					SecretAccessKey: "SECRET_ACCESS_KEY",
 					SessionToken:    "SESSION_TOKEN",
 				},
+				scriptFormat: "shell",
 			},
-			want:    "testdata/script.sh",
+			want:    "testdata/script.shell",
+			wantErr: false,
+		},
+		{
+			name: "credential_file",
+			args: args{
+				creds: &aws.Credentials{
+					AccessKeyID:     "ACCESS_KEY_ID",
+					SecretAccessKey: "SECRET_ACCESS_KEY",
+					SessionToken:    "SESSION_TOKEN",
+				},
+				scriptFormat: "credential_file",
+			},
+			want:    "testdata/script.credential_file",
 			wantErr: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			scriptPath := filepath.Join(t.TempDir(), "script.sh")
+			scriptPath := filepath.Join(t.TempDir(), fmt.Sprintf("script.%s", tt.args.scriptFormat))
 			c := &Config{
 				ScriptPath: scriptPath,
 				AWS: &AWS{
 					Region: "us-east-1",
 				},
+				ScriptFormat: tt.args.scriptFormat,
 			}
 
 			err := c.WriteCreds(tt.args.creds)

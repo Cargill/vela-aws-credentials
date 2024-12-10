@@ -128,7 +128,12 @@ func main() {
 			EnvVars: []string{"PARAMETER_SCRIPT_PATH", "AWS_CREDENTIALS_SCRIPT_PATH"},
 			Name:    "script_path",
 			Usage:   "path where to write script that contains AWS credentials",
-			Value:   "/vela/secrets/aws/setup.sh",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_SCRIPT_FORMAT", "AWS_CREDENTIALS_SCRIPT_FORMAT"},
+			Name:    "script_format",
+			Usage:   "format of AWS credentials script (shell or credential_file)",
+			Value:   "shell",
 		},
 		&cli.BoolFlag{
 			EnvVars: []string{"PARAMETER_SCRIPT_WRITE", "AWS_CREDENTIALS_SCRIPT_WRITE"},
@@ -174,10 +179,11 @@ func run(c *cli.Context) error {
 
 	// create the plugin
 	p := &plugin.Config{
-		Audience:    c.String("audience"),
-		Verify:      c.Bool("verify"),
-		ScriptPath:  c.String("script_path"),
-		ScriptWrite: c.Bool("script_write"),
+		Audience:     c.String("audience"),
+		Verify:       c.Bool("verify"),
+		ScriptPath:   c.String("script_path"),
+		ScriptFormat: c.String("script_format"),
+		ScriptWrite:  c.Bool("script_write"),
 		AWS: &plugin.AWS{
 			Region:                 c.String("aws.region"),
 			Role:                   c.String("aws.role"),
