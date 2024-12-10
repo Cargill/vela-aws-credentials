@@ -92,9 +92,9 @@ func (c *Config) Validate() error {
 	if c.ScriptPath == "" {
 		switch c.ScriptFormat {
 		case "shell":
-			c.ScriptFormat = "/vela/secrets/aws/setup.sh"
+			c.ScriptPath = "/vela/secrets/aws/setup.sh"
 		case "credential_file":
-			c.ScriptFormat = "/vela/secrets/aws/creds"
+			c.ScriptPath = "/vela/secrets/aws/creds"
 		}
 	}
 
