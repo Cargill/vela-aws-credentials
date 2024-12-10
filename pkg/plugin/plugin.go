@@ -4,8 +4,9 @@ package plugin
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"slices"
+
+	"github.com/sirupsen/logrus"
 )
 
 type (

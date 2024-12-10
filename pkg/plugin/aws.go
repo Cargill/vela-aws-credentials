@@ -36,7 +36,8 @@ func (c *Config) AssumeRole(token string) (*aws.Credentials, error) {
 		RoleArn:          aws.String(c.AWS.Role),
 		RoleSessionName:  aws.String(c.AWS.RoleSessionName),
 		WebIdentityToken: aws.String(token),
-		DurationSeconds:  aws.Int32(int32(c.AWS.RoleDurationSeconds)),
+		//nolint:gosec // disable G115
+		DurationSeconds: aws.Int32(int32(c.AWS.RoleDurationSeconds)),
 	}
 
 	if c.AWS.InlineSessionPolicy != "" {
@@ -80,6 +81,7 @@ func (c *Config) AssumeRole(token string) (*aws.Credentials, error) {
 
 func (c *Config) WriteCreds(creds *aws.Credentials) error {
 	var content string
+
 	switch c.ScriptFormat {
 	case "shell":
 		content = fmt.Sprintf(

@@ -189,7 +189,7 @@ lint: lint-install
 lint-install:
 	@echo
 	@echo "### Installing Lint Binary"
-	@which golangci-lint || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.55.2
+	@which golangci-lint || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.62.2
 
 # The `docker-build` target is intended to build
 # the Docker image for the plugin.
