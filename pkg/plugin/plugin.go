@@ -4,19 +4,20 @@ package plugin
 
 import (
 	"fmt"
-
 	"github.com/sirupsen/logrus"
+	"slices"
 )
 
 type (
 	// Config struct represents fields user can present to plugin.
 	Config struct {
-		Audience    string
-		Verify      bool
-		ScriptPath  string
-		ScriptWrite bool
-		AWS         *AWS
-		Vela        *Vela
+		Audience     string
+		Verify       bool
+		ScriptPath   string
+		ScriptFormat string
+		ScriptWrite  bool
+		AWS          *AWS
+		Vela         *Vela
 	}
 
 	// AWS struct represents the config for the AWS role assumption.
@@ -80,6 +81,20 @@ func (c *Config) Validate() error {
 
 	if c.Vela.RequestTokenURL == "" {
 		return fmt.Errorf("no request token url provided")
+	}
+
+	supportedFormats := []string{"shell", "credential_file"}
+	if !slices.Contains(supportedFormats, c.ScriptFormat) {
+		return fmt.Errorf("only script formats of %s are supported", supportedFormats)
+	}
+
+	if c.ScriptPath == "" {
+		switch c.ScriptFormat {
+		case "shell":
+			c.ScriptFormat = "/vela/secrets/aws/setup.sh"
+		case "credential_file":
+			c.ScriptFormat = "/vela/secrets/aws/creds"
+		}
 	}
 
 	if c.Vela.RequestToken == "" {
