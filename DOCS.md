@@ -33,14 +33,12 @@ resource "aws_iam_openid_connect_provider" "vela" {
 
 Review the [official AWS documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html) for IAM roles with OIDC.
 
-> **NOTE:** It is critical that the IAM trust policy has conditions to limit which Vela pipelines/steps are able to assume the IAM role.
+> **NOTE:** It is critical that the IAM trust policy has conditions to limit which Vela pipelines are able to assume the IAM role.
 
 The example below includes several conditions that limit the ability to assume the IAM role:
 
 1. The `StringLike` condition on the `sub` claim with a wildcard operator (*) allows any branch or pull request merge branch from the `octo-org/octo-repo` organization and repository to assume the IAM role in AWS.
-2. The `StringLike` condition on the `image` claim with a wildcard operator (*) permits only steps that use the `golang:<tag>` image to assume the IAM role in AWS.
-3. The `StringEquals` condition on the `aud` claim ensures that only tokens with the audience of `sts.amazonaws.com` can assume the IAM role in AWS. `sts.amazonaws.com` is the default audience when utilizing this plugin.
-4. The `StringEquals` condition on the `commands` claim ensures that only steps without a `commands` section can assume the IAM role in AWS.
+2. The `StringEquals` condition on the `aud` claim ensures that only tokens with the audience of `sts.amazonaws.com` can assume the IAM role in AWS. `sts.amazonaws.com` is the default audience when utilizing this plugin.
 
 > **NOTE:** AWS requires that all conditions must be met for the role assumption to succeed. If any condition is not met, the role assumption will fail.
 
@@ -56,12 +54,10 @@ The example below includes several conditions that limit the ability to assume t
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
                 "StringLike": {
-                    "vela-server.com/_services/token:sub": "repo:octo-org/octo-repo:*",
-                    "vela-server.com/_services/token:image": "golang:*"
+                    "vela-server.com/_services/token:sub": "repo:octo-org/octo-repo:*"
                 },
                 "StringEquals": {
-                    "vela-server.com/_services/token:aud": "sts.amazonaws.com",
-                    "vela-server.com/_services/token:commands": false
+                    "vela-server.com/_services/token:aud": "sts.amazonaws.com"
                 }
             }
         }
@@ -69,7 +65,7 @@ The example below includes several conditions that limit the ability to assume t
 }
 ```
 
-The full list of claims that Vela exposes to AWS can be found within [the Vela docs](https://go-vela.github.io/docs/usage/open_id_connect/#id-token-claims).
+Although Vela exposes many pipeline values via [custom claims](https://go-vela.github.io/docs/usage/open_id_connect/#id-token-claims) to limit role assumption, AWS currently only supports using the claims specified in the [AWS docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#condition-keys-wif).
 
 Terraform example:
 
@@ -89,21 +85,9 @@ data "aws_iam_policy_document" "assume_role_policy" {
     }
 
     condition {
-      test = "StringLike"
-      variable = "vela-server.com/_services/token:image"
-      values = ["golang:*"]
-    }
-
-    condition {
       test = "StringEquals"
       variable = "vela-server.com/_services/token:aud"
       values = ["sts.amazonaws.com"]
-    }
-
-    condition {
-      test = "StringEquals"
-      variable = "vela-server.com/_services/token:commands"
-      values = [false]
     }
   }
 }
