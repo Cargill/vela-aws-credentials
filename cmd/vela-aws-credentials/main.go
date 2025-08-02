@@ -139,6 +139,16 @@ func main() {
 			Usage:   "if the credentials script should be created",
 			Value:   false,
 		},
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_APPEND_CONFIG", "AWS_CREDENTIALS_APPEND_CONFIG"},
+			Name:    "append_config",
+			Usage:   "append to existing credential file instead of overwriting (credential_file format only)",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_PROFILE_NAME", "AWS_CREDENTIALS_PROFILE_NAME"},
+			Name:    "profile_name",
+			Usage:   "profile name to use in credential file (credential_file format only)",
+		},
 	}
 
 	err := app.Run(os.Args)
@@ -175,6 +185,21 @@ func run(c *cli.Context) error {
 		"registry": "https://hub.docker.com/r/cargill/vela-aws-credentials",
 	}).Info("Vela AWS Credentials Config")
 
+	// Handle pointer fields for AppendConfig and ProfileName
+	var appendConfig *bool
+	var profileName *string
+
+	// Only set pointers if flags are explicitly provided
+	if c.IsSet("append_config") {
+		val := c.Bool("append_config")
+		appendConfig = &val
+	}
+
+	if c.IsSet("profile_name") {
+		val := c.String("profile_name")
+		profileName = &val
+	}
+
 	// create the plugin
 	p := &plugin.Config{
 		Audience:     c.String("audience"),
@@ -182,6 +207,8 @@ func run(c *cli.Context) error {
 		ScriptPath:   c.String("script_path"),
 		ScriptFormat: c.String("script_format"),
 		ScriptWrite:  c.Bool("script_write"),
+		AppendConfig: appendConfig,
+		ProfileName:  profileName,
 		AWS: &plugin.AWS{
 			Region:                 c.String("aws.region"),
 			Role:                   c.String("aws.role"),
