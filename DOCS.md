@@ -148,6 +148,55 @@ steps:
       - aws sts get-caller-identity
 ```
 
+Example of generating AWS credentials file with custom profile name:
+
+```yaml
+steps:
+  - name: generate_aws
+    image: cargill/vela-aws-credentials:latest
+    id_request: yes
+    parameters:
+      role: "arn:aws:iam::123456123456:role/test"
+      script_write: true
+      script_format: "credential_file"
+      profile_name: "production"
+
+  - name: test_aws
+    image: amazon/aws-cli:latest
+    commands:
+      - aws sts get-caller-identity --profile production
+```
+
+Example of appending multiple profiles to a single AWS credentials file:
+
+```yaml
+steps:
+  - name: generate_dev_aws
+    image: cargill/vela-aws-credentials:latest
+    id_request: yes
+    parameters:
+      role: "arn:aws:iam::123456123456:role/dev"
+      script_write: true
+      script_format: "credential_file"
+      profile_name: "dev"
+
+  - name: generate_prod_aws
+    image: cargill/vela-aws-credentials:latest
+    id_request: yes
+    parameters:
+      role: "arn:aws:iam::123456123456:role/prod"
+      script_write: true
+      script_format: "credential_file"
+      profile_name: "prod"
+      append_config: true
+
+  - name: test_aws
+    image: amazon/aws-cli:latest
+    commands:
+      - aws sts get-caller-identity --profile dev
+      - aws sts get-caller-identity --profile prod
+```
+
 ## Parameters
 
 > **NOTE:**
@@ -170,6 +219,8 @@ The following parameters are used to configure the image:
 | `script_path`              | Path where to write script that contains AWS credentials                                                                                                                       | `false`  | `/vela/secrets/aws/setup.sh` (shell) or `/vela/secrets/aws/creds` (credential_file) | `PARAMETER_SCRIPT_PATH`<br>`AWS_CREDENTIALS_SCRIPT_PATH`                           |
 | `script_write`             | If the credentials script should be created.                                                                                                                                   | `false`  | `false`                                                                             | `PARAMETER_SCRIPT_WRITE`<br>`AWS_CREDENTIALS_SCRIPT_WRITE`                         |
 | `script_format`            | Format of file to write (shell or credential_file)                                                                                                                             | `false`  | `N/A`                                                                               | `PARAMETER_SCRIPT_FORMAT`<br>`AWS_CREDENTIALS_SCRIPT_FORMAT`                       |
+| `append_config`            | When using credential_file format, append to existing file instead of overwriting. Fails if profile already exists.                                                            | `false`  | `N/A`                                                                               | `PARAMETER_APPEND_CONFIG`<br>`AWS_CREDENTIALS_APPEND_CONFIG`                       |
+| `profile_name`             | When using credential_file format, specify the profile name to use instead of 'default'.                                                                                       | `false`  | `default` (when not specified)                                                     | `PARAMETER_PROFILE_NAME`<br>`AWS_CREDENTIALS_PROFILE_NAME`                         |
 | `inline_session_policy`    | An IAM policy in JSON format that you want to use as an inline session policy when assuming the IAM role.                                                                      | `false`  | `N/A`                                                                               | `PARAMETER_INLINE_SESSION_POLICY`<br>`AWS_CREDENTIALS_INLINE_SESSION_POLICY`       |
 | `managed_session_policies` | List of ARNs of the IAM managed policies that you want to use as managed session policies when assuming the IAM role. The policies must exist in the same account as the role. | `false`  | `N/A`                                                                               | `PARAMETER_MANAGED_SESSION_POLICIES`<br>`AWS_CREDENTIALS_MANAGED_SESSION_POLICIES` |
 

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -80,24 +81,17 @@ func (c *Config) AssumeRole(token string) (*aws.Credentials, error) {
 }
 
 func (c *Config) WriteCreds(creds *aws.Credentials) error {
-	var content string
-
 	switch c.ScriptFormat {
 	case "shell":
-		content = fmt.Sprintf(
-			`#!/bin/sh
-export AWS_ACCESS_KEY_ID=%s
-export AWS_SECRET_ACCESS_KEY=%s
-export AWS_SESSION_TOKEN=%s
-export AWS_DEFAULT_REGION=%s`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken, c.AWS.Region)
+		return c.writeEnvVarsFile(creds)
 	case "credential_file":
-		content = fmt.Sprintf(
-			`[default]
-aws_access_key_id=%s
-aws_secret_access_key=%s
-aws_session_token=%s`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken)
+		return c.writeCredsFile(creds)
 	}
 
+	return fmt.Errorf("unsupported script format: %s", c.ScriptFormat)
+}
+
+func (c *Config) writeFile(content string) error {
 	if _, err := os.Stat(c.ScriptPath); os.IsNotExist(err) {
 		err = os.MkdirAll(filepath.Dir(c.ScriptPath), 0700)
 		if err != nil {
@@ -117,4 +111,81 @@ aws_session_token=%s`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionTo
 	}
 
 	return nil
+}
+
+func (c *Config) writeEnvVarsFile(creds *aws.Credentials) error {
+	content := fmt.Sprintf(
+		`#!/bin/sh
+export AWS_ACCESS_KEY_ID=%s
+export AWS_SECRET_ACCESS_KEY=%s
+export AWS_SESSION_TOKEN=%s
+export AWS_DEFAULT_REGION=%s`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken, c.AWS.Region)
+	
+	return c.writeFile(content)
+}
+
+func (c *Config) writeCredsFile(creds *aws.Credentials) error {
+	// Determine profile name
+	profileName := "default"
+	if c.ProfileName != nil {
+		profileName = *c.ProfileName
+	}
+
+	// Create new profile content
+	newProfileContent := fmt.Sprintf(`[%s]
+aws_access_key_id=%s
+aws_secret_access_key=%s
+aws_session_token=%s`, profileName, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken)
+
+	// If not appending, just write the new content
+	if c.AppendConfig == nil || !*c.AppendConfig {
+		return c.writeFile(newProfileContent)
+	}
+
+	// Handle append mode
+	return c.appendCredentialFile(profileName, newProfileContent)
+}
+
+func (c *Config) appendCredentialFile(profileName, newProfileContent string) error {
+	// Ensure directory exists
+	if _, err := os.Stat(c.ScriptPath); os.IsNotExist(err) {
+		err = os.MkdirAll(filepath.Dir(c.ScriptPath), 0700)
+		if err != nil {
+			return err
+		}
+		// File doesn't exist, create it with the new content
+		return c.writeFile(newProfileContent)
+	}
+
+	// Read existing file
+	existingContent, err := os.ReadFile(c.ScriptPath)
+	if err != nil {
+		return err
+	}
+
+	// Check if profile already exists
+	if c.profileExists(string(existingContent), profileName) {
+		return fmt.Errorf("profile [%s] already exists in credentials file %s", profileName, c.ScriptPath)
+	}
+
+	// Append new profile
+	var mergedContent string
+	if strings.TrimSpace(string(existingContent)) == "" {
+		mergedContent = newProfileContent
+	} else {
+		mergedContent = strings.TrimRight(string(existingContent), "\n") + "\n" + newProfileContent
+	}
+
+	return c.writeFile(mergedContent)
+}
+
+func (c *Config) profileExists(content, profileName string) bool {
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == fmt.Sprintf("[%s]", profileName) {
+			return true
+		}
+	}
+	return false
 }
