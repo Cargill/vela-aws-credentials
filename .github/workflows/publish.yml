@@ -53,5 +53,6 @@ jobs:
         with:
           push: true
           sbom: true
+          context: .
           provenance: mode=max
           tags: ${{ steps.meta.outputs.tags }}
