@@ -17,6 +17,8 @@ type (
 		ScriptPath   string
 		ScriptFormat string
 		ScriptWrite  bool
+		AppendConfig *bool
+		ProfileName  *string
 		AWS          *AWS
 		Vela         *Vela
 	}
@@ -87,6 +89,15 @@ func (c *Config) Validate() error {
 	supportedFormats := []string{"shell", "credential_file"}
 	if !slices.Contains(supportedFormats, c.ScriptFormat) {
 		return fmt.Errorf("only script formats of %s are supported", supportedFormats)
+	}
+
+	// Validate AppendConfig and ProfileName are only used with credential_file format
+	if c.AppendConfig != nil && c.ScriptFormat != "credential_file" {
+		return fmt.Errorf("append_config can only be used with credential_file format, but script_format is set to %s", c.ScriptFormat)
+	}
+
+	if c.ProfileName != nil && c.ScriptFormat != "credential_file" {
+		return fmt.Errorf("profile_name can only be used with credential_file format, but script_format is set to %s", c.ScriptFormat)
 	}
 
 	if c.ScriptPath == "" {
