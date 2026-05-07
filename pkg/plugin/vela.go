@@ -3,6 +3,7 @@
 package plugin
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 
@@ -24,7 +25,7 @@ func (c *Config) GenerateVelaToken() (string, error) {
 
 	opt := &vela.IDTokenOptions{Audience: []string{c.Audience}}
 
-	token, _, err := client.Build.GetIDToken(c.Vela.OrgName, c.Vela.RepoName, c.Vela.BuildNumber, opt)
+	token, _, err := client.Build.GetIDToken(context.Background(), c.Vela.OrgName, c.Vela.RepoName, c.Vela.BuildNumber, opt)
 	if err != nil {
 		return "", err
 	}
