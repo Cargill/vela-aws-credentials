@@ -40,8 +40,8 @@ var (
 			EnvVars:  []string{"PARAMETER_SCRIPT_FORMAT", "AWS_CREDENTIALS_SCRIPT_FORMAT"},
 			FilePath: "/vela/parameters/aws-credentials/script_format,/vela/secrets/aws-credentials/script_format",
 			Name:     FlagScriptFormat,
-			Usage:    "format of AWS credentials script (ScriptFormatShell or ScriptFormatCredentialFile)",
-			Value:    "ScriptFormatShell",
+			Usage:    "format of AWS credentials script (shell or credential_file)",
+			Value:    ScriptFormatShell,
 		},
 		&cli.BoolFlag{
 			EnvVars: []string{"PARAMETER_SCRIPT_WRITE", "AWS_CREDENTIALS_SCRIPT_WRITE"},
