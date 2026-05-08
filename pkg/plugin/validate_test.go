@@ -1,14 +1,13 @@
-// SPDX-License-Identifier: Apache-2.0
-
 package plugin
 
 import (
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfig_Validate(t *testing.T) {
+func TestPlugin_Validate(t *testing.T) {
 	tests := []struct {
 		name    string
 		config  *Config
@@ -25,9 +24,26 @@ func TestConfig_Validate(t *testing.T) {
 					RequestToken:    "testToken",
 					RequestTokenURL: "http://127.0.0.1",
 				},
-				ScriptFormat: "shell",
+				Logger:       logrus.NewEntry(logrus.StandardLogger()),
+				ScriptFormat: "credential_file",
 			},
 			wantErr: false,
+		},
+		{
+			name: "unsupported script format",
+			config: &Config{
+				AWS: &AWS{
+					Role:                "testRole",
+					RoleDurationSeconds: 3600,
+				},
+				Vela: &Vela{
+					RequestToken:    "testToken",
+					RequestTokenURL: "http://127.0.0.1",
+				},
+				Logger:       logrus.NewEntry(logrus.StandardLogger()),
+				ScriptFormat: "invalid",
+			},
+			wantErr: true,
 		},
 		{
 			name: "AWS Role field is empty",
@@ -40,6 +56,7 @@ func TestConfig_Validate(t *testing.T) {
 					RequestToken:    "testToken",
 					RequestTokenURL: "http://127.0.0.1",
 				},
+				Logger:       logrus.NewEntry(logrus.StandardLogger()),
 				ScriptFormat: "shell",
 			},
 			wantErr: true,
@@ -54,6 +71,7 @@ func TestConfig_Validate(t *testing.T) {
 				Vela: &Vela{
 					RequestToken: "testToken",
 				},
+				Logger:       logrus.NewEntry(logrus.StandardLogger()),
 				ScriptFormat: "shell",
 			},
 			wantErr: true,
@@ -68,6 +86,7 @@ func TestConfig_Validate(t *testing.T) {
 				Vela: &Vela{
 					RequestToken: "testToken",
 				},
+				Logger:       logrus.NewEntry(logrus.StandardLogger()),
 				ScriptFormat: "shell",
 			},
 			wantErr: true,
@@ -83,6 +102,7 @@ func TestConfig_Validate(t *testing.T) {
 					RequestToken:    "",
 					RequestTokenURL: "http://127.0.0.1",
 				},
+				Logger:       logrus.NewEntry(logrus.StandardLogger()),
 				ScriptFormat: "shell",
 			},
 			wantErr: true,
