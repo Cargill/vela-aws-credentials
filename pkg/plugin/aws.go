@@ -83,14 +83,14 @@ func (c *Config) WriteCreds(creds *aws.Credentials) error {
 	var content string
 
 	switch c.ScriptFormat {
-	case "shell":
+	case ScriptFormatShell:
 		content = fmt.Sprintf(
 			`#!/bin/sh
 export AWS_ACCESS_KEY_ID=%s
 export AWS_SECRET_ACCESS_KEY=%s
 export AWS_SESSION_TOKEN=%s
 export AWS_DEFAULT_REGION=%s`, creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken, c.AWS.Region)
-	case "credential_file":
+	case ScriptFormatCredentialFile:
 		content = fmt.Sprintf(
 			`[default]
 aws_access_key_id=%s

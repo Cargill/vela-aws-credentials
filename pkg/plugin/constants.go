@@ -16,7 +16,7 @@ const (
 	// FlagVerify represents the name of the flag for setting whether to validate the AWS credentials for the plugin.
 	FlagVerify = "verify"
 
-	// AWS Configuration Flags
+	// AWS Configuration Flags.
 
 	// FlagAWSInlineSessionPolicy represents the name of the flag for setting the AWS inline session policy for the plugin.
 	FlagAWSInlineSessionPolicy = "aws.inline_session_policy"
@@ -31,16 +31,27 @@ const (
 	// FlagAWSRoleSessionName represents the name of the flag for setting the session name when assuming the AWS IAM role for the plugin.
 	FlagAWSRoleSessionName = "aws.role_session_name"
 
-	// Vela Configuration Flags
+	// Vela Configuration Flags.
 
 	// FlagVelaBuildNumber represents the name of the flag for capturing the build number from Vela for the plugin.
 	FlagVelaBuildNumber = "vela.build_number"
 	// FlagVelaIDTokenRequestToken represents the name of the flag for capturing the OIDC request token from Vela for the plugin.
+	//
+	//nolint:gosec // ignore false positive for hardcoded credential
 	FlagVelaIDTokenRequestToken = "vela.id_token_request_token"
 	// FlagVelaIDTokenRequestURL represents the name of the flag for capturing the OIDC request token URL from Vela for the plugin.
+	//
+	//nolint:gosec // ignore false positive for hardcoded credential
 	FlagVelaIDTokenRequestURL = "vela.id_token_request_url"
 	// FlagVelaOrgName represents the name of the flag for capturing the organization name from Vela for the plugin.
 	FlagVelaOrgName = "vela.org_name"
 	// FlagVelaRepoName represents the name of the flag for capturing the repository name from Vela for the plugin.
 	FlagVelaRepoName = "vela.repo_name"
+
+	// ScriptFormatCredentialFile represents the value for the script format flag to write AWS credentials as a credential file.
+	//
+	//nolint:gosec // ignore false positive for hardcoded credential
+	ScriptFormatCredentialFile = "credential_file"
+	// ScriptFormatShell represents the value for the script format flag to write AWS credentials as a shell script.
+	ScriptFormatShell = "shell"
 )

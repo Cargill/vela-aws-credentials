@@ -15,7 +15,7 @@ func TestPlugin_FromCLIContext(t *testing.T) {
 	flags.String(FlagAudience, "sts.amazonaws.com", "doc")
 	flags.String(FlagLogFormat, "json", "doc")
 	flags.String(FlagLogLevel, "info", "doc")
-	flags.String(FlagScriptFormat, "shell", "doc")
+	flags.String(FlagScriptFormat, ScriptFormatShell, "doc")
 	flags.String(FlagScriptPath, "/path/to/script", "doc")
 	flags.Bool(FlagScriptWrite, true, "doc")
 	flags.Bool(FlagVerify, true, "doc")

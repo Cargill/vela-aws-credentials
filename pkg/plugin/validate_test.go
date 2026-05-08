@@ -20,12 +20,13 @@ func TestPlugin_Validate(t *testing.T) {
 					Role:                "testRole",
 					RoleDurationSeconds: 3600,
 				},
+				//nolint:gosec // ignore false positive for hardcoded credential
 				Vela: &Vela{
 					RequestToken:    "testToken",
 					RequestTokenURL: "http://127.0.0.1",
 				},
 				Logger:       logrus.NewEntry(logrus.StandardLogger()),
-				ScriptFormat: "credential_file",
+				ScriptFormat: ScriptFormatCredentialFile,
 			},
 			wantErr: false,
 		},
@@ -36,6 +37,7 @@ func TestPlugin_Validate(t *testing.T) {
 					Role:                "testRole",
 					RoleDurationSeconds: 3600,
 				},
+				//nolint:gosec // ignore false positive for hardcoded credential
 				Vela: &Vela{
 					RequestToken:    "testToken",
 					RequestTokenURL: "http://127.0.0.1",
@@ -52,12 +54,13 @@ func TestPlugin_Validate(t *testing.T) {
 					Role:                "",
 					RoleDurationSeconds: 3600,
 				},
+				//nolint:gosec // ignore false positive for hardcoded credential
 				Vela: &Vela{
 					RequestToken:    "testToken",
 					RequestTokenURL: "http://127.0.0.1",
 				},
 				Logger:       logrus.NewEntry(logrus.StandardLogger()),
-				ScriptFormat: "shell",
+				ScriptFormat: ScriptFormatShell,
 			},
 			wantErr: true,
 		},
@@ -72,7 +75,7 @@ func TestPlugin_Validate(t *testing.T) {
 					RequestToken: "testToken",
 				},
 				Logger:       logrus.NewEntry(logrus.StandardLogger()),
-				ScriptFormat: "shell",
+				ScriptFormat: ScriptFormatShell,
 			},
 			wantErr: true,
 		},
@@ -87,7 +90,7 @@ func TestPlugin_Validate(t *testing.T) {
 					RequestToken: "testToken",
 				},
 				Logger:       logrus.NewEntry(logrus.StandardLogger()),
-				ScriptFormat: "shell",
+				ScriptFormat: ScriptFormatShell,
 			},
 			wantErr: true,
 		},
@@ -98,12 +101,13 @@ func TestPlugin_Validate(t *testing.T) {
 					Role:                "testRole",
 					RoleDurationSeconds: 3600,
 				},
+				//nolint:gosec // ignore false positive for hardcoded credential
 				Vela: &Vela{
 					RequestToken:    "",
 					RequestTokenURL: "http://127.0.0.1",
 				},
 				Logger:       logrus.NewEntry(logrus.StandardLogger()),
-				ScriptFormat: "shell",
+				ScriptFormat: ScriptFormatShell,
 			},
 			wantErr: true,
 		},

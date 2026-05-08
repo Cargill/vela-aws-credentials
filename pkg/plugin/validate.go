@@ -22,16 +22,16 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("no request token url provided")
 	}
 
-	supportedFormats := []string{"shell", "credential_file"}
+	supportedFormats := []string{ScriptFormatShell, ScriptFormatCredentialFile}
 	if !slices.Contains(supportedFormats, c.ScriptFormat) {
 		return fmt.Errorf("only script formats of %s are supported", supportedFormats)
 	}
 
 	if c.ScriptPath == "" {
 		switch c.ScriptFormat {
-		case "shell":
+		case ScriptFormatShell:
 			c.ScriptPath = "/vela/secrets/aws/setup.sh"
-		case "credential_file":
+		case ScriptFormatCredentialFile:
 			c.ScriptPath = "/vela/secrets/aws/creds"
 		}
 	}
