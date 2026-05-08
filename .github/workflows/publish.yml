@@ -1,10 +1,12 @@
 # name of the action
 name: publish
 
-# trigger on push events with branch main
+# trigger on push events with branch main or tag events
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
 
 # pipeline to execute
 jobs:
