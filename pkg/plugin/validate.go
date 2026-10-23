@@ -9,7 +9,7 @@ import (
 func (c *Config) Validate() error {
 	c.Logger.Debug("validating plugin configuration")
 
-	// validate that a webhook was supplied
+	// validate that a role was supplied
 	if len(c.AWS.Role) == 0 {
 		return fmt.Errorf("no role provided")
 	}
